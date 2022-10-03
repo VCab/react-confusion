@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { Card, CardImg, CardText, CardBody, CardTitle, List, Breadcrumb, BreadcrumbItem, Button, Modal, ModalHeader, ModalBody, Row, Col, Label } from 'reactstrap';
 import { Link } from 'react-router-dom';
-// import CommentForm from './CommentComponent';
 import { LocalForm, Control, Errors } from 'react-redux-form';
 
 const maxLength = (len) => (val) => !(val) || (val.length <= len);
@@ -24,11 +23,10 @@ class CommentForm extends Component {
     toggleModal() {
         this.setState({ isModalOpen: !this.state.isModalOpen });
     }
-    
+
     handleSubmit(values) {
-        alert("Current state is: " + JSON.stringify(values));
-        console.log("Current state is: " + JSON.stringify(values));
         this.toggleModal();
+        this.props.addComment(this.props.dishId, values.rating, values.author, values.comment);
     }
 
     render() {
@@ -76,9 +74,9 @@ class CommentForm extends Component {
                                         className="form-control" />
                                 </Col>
                             </Row>
-                        <Button type="submit" color="primary">
-                            Submit
-                        </Button>
+                            <Button type="submit" color="primary">
+                                Submit
+                            </Button>
                         </LocalForm>
                     </ModalBody>
                 </Modal>
@@ -100,7 +98,7 @@ function RenderDish({ dish }) {
     )
 }
 
-function RenderComments({ comments }) {
+function RenderComments({ comments, addComment, dishId }) {
     if (comments.length) {
         const commentsList = comments.map((comment) =>
             <div>
@@ -114,7 +112,7 @@ function RenderComments({ comments }) {
                 <List type="unstyled">
                     {commentsList}
                 </List>
-                <CommentForm></CommentForm>
+                <CommentForm dishId={dishId} addComment={addComment}></CommentForm>
             </div>
         )
     } else {
@@ -144,7 +142,10 @@ const DishDetail = (props) => {
                         <RenderDish dish={dish}></RenderDish>
                     </div>
                     <div className="col-12 col-md-5 m-1">
-                        <RenderComments comments={props.comments}></RenderComments>
+                        <RenderComments comments={props.comments}
+                            addComment={props.addComment}
+                            dishId={props.dish.id}>
+                        </RenderComments>
                     </div>
                 </div>
             </div>
